@@ -10,12 +10,14 @@ This is **not** meant to be installed as one big package. Browse the repo and co
 
 Some extensions are big enough to live in their own repositories:
 
-- **[pi-interactive-subagents](https://github.com/amosblomqvist/pi-interactive-subagents)** — async, interactive subagents in multiplexer panes
+- **[pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)** — async subagents on tmux or Herdr terminal surfaces, maintained in a separate fork
 - **[pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)** — tiered session memory with deterministic compaction
 - **[pi-dictate](https://github.com/amosblomqvist/pi-dictate)** — real-time voice dictation inside pi
 - **[learn](https://github.com/amosblomqvist/learn)** — my AI learning system, built on top of this config
 
 This repo contains everything else.
+
+For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
 
 ## Copy an extension
 
@@ -60,7 +62,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `bash-guard/` — hooks that catch dangerous bash commands before they run, with an on/off toggle
 - `browser/` — Playwright-driven headless Chromium the agent can drive (navigate, eval JS, inspect network/console, click, screenshot); off by default, enable with `/browser on`
 - `custom-header.ts` — the big capital Π header
-- `interactive-subagents/` — stub, see [pi-interactive-subagents](https://github.com/amosblomqvist/pi-interactive-subagents)
+- `interactive-subagents/` — stub, see [gpmarques/pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)
 - `observational-memory/` — stub, see [pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)
 - `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send
 - `web-fetch/` — fetch a URL and get clean markdown
