@@ -3,7 +3,7 @@
 **Question:** How does this repository extend Pi, and what are its main boundaries and operating assumptions?
 **Boundary:** The active `extensions/` and `skills/` trees, their setup dependencies, the external-extension stubs, and the `deprecated/` archive. The linked external repositories are not analyzed.
 **Horizon:** Selecting and running pieces of this snapshot with a current Pi installation.
-**Evidence basis:** Static inspection of `main` at commit `f82da56`; runtime compatibility was not tested.
+**Evidence basis:** Static inspection of the current repository snapshot and a local-only exercise of the `web-debug` command workflow with installed `agent-browser` 0.18.0. Runtime compatibility of the other components was not tested.
 
 ## At a glance
 
@@ -22,7 +22,7 @@ A user selects one module
   → the agent gains a focused capability during future turns
 ```
 
-The path is conditional: browser automation also needs Chromium, web search needs Google credentials, PDF reading needs a PyMuPDF virtual environment, and YouTube transcripts need `yt-dlp`. The repository deliberately supplies no root package manifest or one-command installer.
+The path is conditional: the local browser extension also needs Chromium, web search needs Google credentials, `web-debug` needs an external `agent-browser` executable, PDF reading needs a PyMuPDF virtual environment, and YouTube transcripts need `yt-dlp`. The repository deliberately supplies no root package manifest or one-command installer.
 
 ## Parts
 
@@ -44,7 +44,7 @@ The path is conditional: browser automation also needs Chromium, web search need
 
 - `analyze-sessions/`: read-only Python utilities for session cost, prompt, transcript, and search analysis.
 - `pdf-reader/`: a text-plus-rendering workflow backed by PyMuPDF scripts.
-- `web-debug/`: a runtime-first frontend debugging playbook coupled to the browser extension.
+- `web-debug/`: a runtime-first frontend debugging playbook that drives the external `agent-browser` CLI through bash, using explicit isolated sessions and request-only network evidence.
 - `youtube-transcript/`: a `yt-dlp`-backed title and English-caption extractor.
 
 ### Archive
@@ -53,7 +53,7 @@ The path is conditional: browser automation also needs Chromium, web search need
 
 ## Generated behavior
 
-- **Runtime-observation loop:** `web_search` discovers sources, `web_fetch` reads static content, and `browser_*` reproduces live behavior; `web-debug` turns those tools into a repeatable observe → hypothesize → change → verify loop.
+- **Runtime-observation surfaces:** `web_search` discovers sources, `web_fetch` reads static content, `web-debug` uses installed `agent-browser` to reproduce → observe → hypothesize → verify live frontend behavior, and the optional local `browser_*` extension remains a separate automation surface.
 - **Context-economy loop:** browser tools start inactive and prompt snippets reset after one message, so uncommon guidance does not continuously consume the system prompt. Users opt in again when the capability becomes relevant.
 - **Manual-integration loop:** independent copying limits blast radius, but every upstream change or fresh machine requires the user to repeat setup and compatibility decisions. The repository is a source of pieces, not a synchronization mechanism.
 
@@ -68,7 +68,7 @@ The path is conditional: browser automation also needs Chromium, web search need
 - **Catalogue, not package:** the README says not to install the repository as one package and documents per-resource copying (`README.md`, introduction and “Copy an extension/skill”).
 - **Seven local extension implementations:** their entry points and registrations are under `extensions/`; the two remaining extension directories contain only external-repository pointers.
 - **Selective safety and context controls:** `extensions/bash-guard/index.ts` documents its mode-specific gate; `extensions/browser/index.ts` removes all eight tools from the active set by default; `extensions/prompt-snippets/index.ts` clears enabled snippets after input.
-- **Per-module setup:** npm manifests exist only beside `bash-guard`, `browser`, and `web-fetch`; other external requirements are listed in `README.md` and the relevant skill documents.
+- **Per-module setup:** npm manifests exist only beside `bash-guard`, `browser`, and `web-fetch`; other external requirements, including `agent-browser` for `web-debug`, are listed in `README.md` and the relevant skill documents.
 - **Mixed Pi API namespaces:** five active extension entry points import the older `@mariozechner/*` packages, while `browser` and `prompt-snippets` import `@earendil-works/*` (`extensions/**/*.ts`, import declarations).
 - **No repository-level validation harness:** the tracked tree contains no test suite, continuous-integration configuration, root package manifest, or lockfile.
 

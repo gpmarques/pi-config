@@ -72,7 +72,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 
 - `analyze-sessions/` — Python scripts to query past pi sessions: cost rollups, prompt-pattern mining, session rendering
 - `pdf-reader/` — read PDFs (lecture notes, papers) into the context
-- `web-debug/` — a playbook for debugging frontend issues with the browser extension's tools
+- `web-debug/` — a runtime-first frontend debugging playbook driven through the installed `agent-browser` CLI (independent of the browser extension)
 - `youtube-transcript/` — fetch a YouTube video's title and transcript as JSON
 
 ### Deprecated
@@ -86,6 +86,15 @@ Extension-local npm deps are kept with the extension. Run `npm install` only in 
 - `bash-guard/`
 - `browser/` (also run `npx playwright install chromium` once)
 - `web-fetch/`
+
+`web-debug/` requires an external `agent-browser` executable; it is not an extension-local dependency. After copying the skill, check availability and version:
+
+```bash
+command -v agent-browser
+agent-browser --version
+```
+
+The bundled workflows are validated against `agent-browser 0.18.0`. If another version is installed, consult its top-level and relevant subcommand help before using the examples. The skill fails closed when the executable is unavailable; it does not install or fall back to the separate browser extension.
 
 Optional system tools:
 
