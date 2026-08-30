@@ -12,10 +12,11 @@ Some extensions are big enough to live in their own repositories:
 
 - **[pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)** — async subagents on tmux or Herdr terminal surfaces, maintained in a separate fork
 - **[pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)** — tiered session memory with deterministic compaction
+- **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
 - **[pi-dictate](https://github.com/amosblomqvist/pi-dictate)** — real-time voice dictation inside pi
 - **[learn](https://github.com/amosblomqvist/learn)** — my AI learning system, built on top of this config
 
-This repo contains everything else.
+Local implementations for the remaining active extensions and skills live here. Stub directories point to external projects rather than vendoring their code.
 
 For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
 
@@ -42,6 +43,16 @@ npm install
 
 Then restart pi or run `/reload`.
 
+## Install an externally maintained extension
+
+Directories described as stubs contain documentation only; do not copy them as extension implementations. For example, the upstream `pi-web-access` README currently documents:
+
+```bash
+pi install npm:pi-web-access
+```
+
+Use the [upstream README](https://github.com/nicobailon/pi-web-access#readme) as the authority for current installation, configuration, tools, requirements, and any future update guidance.
+
 ## Copy a skill
 
 ```bash
@@ -65,8 +76,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `interactive-subagents/` — stub, see [gpmarques/pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)
 - `observational-memory/` — stub, see [pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)
 - `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send
-- `web-fetch/` — fetch a URL and get clean markdown
-- `web-search/` — web search
+- `web-access/` — stub, see [pi-web-access](https://github.com/nicobailon/pi-web-access)
 
 ### Skills
 
@@ -77,7 +87,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 
 ### Deprecated
 
-`deprecated/` holds the extensions and skills from the two-month setup that are no longer in active use. They still work; they just didn't earn their place. Kept for reference.
+`deprecated/` holds the extensions and skills from the two-month setup that are no longer in active use. They are kept for reference, not as a supported install set: some still work, while others reference removed extension paths or tool names and require adaptation or restored dependencies.
 
 ## Dependencies
 
@@ -85,7 +95,8 @@ Extension-local npm deps are kept with the extension. Run `npm install` only in 
 
 - `bash-guard/`
 - `browser/` (also run `npx playwright install chromium` once)
-- `web-fetch/`
+
+`web-access/` has no local dependencies because it is a documentation-only reference; the implementation and its dependencies live in the external `pi-web-access` package.
 
 `web-debug/` requires an external `agent-browser` executable; it is not an extension-local dependency. After copying the skill, check availability and version:
 
