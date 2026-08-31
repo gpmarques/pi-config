@@ -16,7 +16,7 @@ Some extensions are big enough to live in their own repositories:
 - **[pi-dictate](https://github.com/amosblomqvist/pi-dictate)** — real-time voice dictation inside pi
 - **[learn](https://github.com/amosblomqvist/learn)** — my AI learning system, built on top of this config
 
-The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **four local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
+The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **five local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
 For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
 
@@ -77,6 +77,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `analyze-sessions/` — Python scripts to query past pi sessions: cost rollups, prompt-pattern mining, session rendering
 - `effective-html/` — README-only external stub for a pinned Pi package providing six standalone HTML artifact skills
 - `pdf-reader/` — read PDFs (lecture notes, papers) into the context
+- `software-factory/` — a four-gate feature workflow—Product, Architecture, Program Design, then Vertical Slices—with explicit approval before implementation
 - `web-debug/` — a runtime-first frontend debugging playbook driven through the installed `agent-browser` CLI
 - `youtube-transcript/` — fetch a YouTube video's title and transcript as JSON
 

@@ -3,13 +3,13 @@
 **Question:** How does this repository extend Pi, and what are its main boundaries and operating assumptions?
 **Boundary:** The active `extensions/` and `skills/` trees, their setup dependencies, four external-integration stubs, one external-skill stub, and the `deprecated/` archive. External review is limited to the evidence needed for those stubs.
 **Horizon:** Selecting and running pieces of this snapshot with Pi 0.84.4; later versions require renewed compatibility checks.
-**Evidence basis:** Static inspection on 2026-08-31 of the resulting documentation worktree atop `pi-config` commit `38dc9295ec9fbe5157318091469cac7b01b9ae83`; Pi 0.84.4 documentation and installed extension-loader source; `gpmarques/pi-interactive-subagents` at `b403b02484aa545b72a0a852aee9ecce524fa6f8`; `plannotator/effective-html` at `d95debbaef15af1d201fc6c10c77cf92b524a0d6`; Herdr Annotate Lite at `ba4903b28fbb77dd0a4bc55a4a7ba3c1ef0913ea`; `pi-web-access` metadata and package surface; published `pi-observational-memory` 3.0.4 metadata/source plus a local-only Pi/llama.cpp smoke test; and a local-only exercise of `web-debug` with `agent-browser` 0.18.0. Runtime compatibility of the remaining components was not tested.
+**Evidence basis:** Static inspection on 2026-08-31 of the resulting worktree atop `pi-config` commit `15f9edb4f6f6bdcc81eb3792c4c8bba51e4e3816`; Pi 0.84.4 documentation and installed extension-loader source; the locally installed `software-factory` source copied unchanged at SHA-256 `49d55f83280d4860a1286a61bd48d5206456e3f26755f4cc9b9df90a43372326`; `gpmarques/pi-interactive-subagents` at `b403b02484aa545b72a0a852aee9ecce524fa6f8`; `plannotator/effective-html` at `d95debbaef15af1d201fc6c10c77cf92b524a0d6`; Herdr Annotate Lite at `ba4903b28fbb77dd0a4bc55a4a7ba3c1ef0913ea`; `pi-web-access` metadata and package surface; published `pi-observational-memory` 3.0.4 metadata/source plus a local-only Pi/llama.cpp smoke test; and a local-only exercise of `web-debug` with `agent-browser` 0.18.0. Runtime compatibility of the remaining components was not tested.
 
-**Dated snapshot note (2026-08-31):** Current repository inventory claims include the uncommitted removal of the former `bash-guard/` and `browser/` implementations and addition of the two new documentation-only stubs; the named `pi-config` commit is the immutable pre-edit review baseline, not a claim that it already contains those changes. External behavior claims are bounded by the exact pins above or the individual stub's documented evidence boundary.
+**Dated snapshot note (2026-08-31):** Current repository inventory claims include the uncommitted addition of the `software-factory` skill; the named `pi-config` commit is the immutable pre-edit baseline, not a claim that it already contains that skill. External behavior claims are bounded by the exact pins above or the individual stub's documented evidence boundary.
 
 ## At a glance
 
-`pi-config` is a personal, selectively adopted configuration catalogue, not an installable monolith. Its active layer contains three local functional extension implementations and four local skills; four extension folders and one skill folder are README-only pointers to external integrations. Users copy only the local capability they want or follow an external stub's reviewed installation boundary.
+`pi-config` is a personal, selectively adopted configuration catalogue, not an installable monolith. Its active layer contains three local functional extension implementations and five local skills; four extension folders and one skill folder are README-only pointers to external integrations. Users copy only the local capability they want or follow an external stub's reviewed installation boundary.
 
 That keeps the active tool surface and context cost controllable, but shifts integration, updates, credentials, and compatibility checks onto the user.
 
@@ -19,7 +19,8 @@ That keeps the active tool surface and context cost controllable, but shifts int
 pi-config catalogue
 ├─ local implementations ──copy selected file/directory──> Pi loads extension or skill
 │  ├─ 3 extensions: ask-user-question, custom-header, prompt-snippets
-│  └─ 4 skills: analyze-sessions, pdf-reader, web-debug, youtube-transcript
+│  └─ 5 skills: analyze-sessions, pdf-reader, software-factory,
+│                web-debug, youtube-transcript
 └─ README-only stubs ──follow reviewed external install──> separately managed runtime
    ├─ 4 integrations: Herdr Annotate, interactive-subagents,
    │                   observational-memory, web-access
@@ -49,10 +50,11 @@ The four integration directories are documentation-only:
 
 - `analyze-sessions/`: read-only Python utilities for session cost, prompt, transcript, and search analysis.
 - `pdf-reader/`: a text-plus-rendering workflow backed by PyMuPDF scripts.
+- `software-factory/`: a self-contained four-gate workflow—Product, Architecture, Program Design, and Vertical Slices—that requires explicit approval before implementation.
 - `web-debug/`: a runtime-first frontend debugging playbook that drives the external `agent-browser` CLI through bash, using explicit isolated sessions and request-only network evidence.
 - `youtube-transcript/`: a `yt-dlp`-backed title and English-caption extractor.
 
-[`effective-html/`](../../skills/effective-html/README.md) is a README-only external skill stub, not a fifth local implementation. Its pinned Pi git package at `d95debbaef15af1d201fc6c10c77cf92b524a0d6` provides `html`, `design-artifact`, `html-wireframe`, `html-prototype`, `html-plan`, and `html-diagram`. Generated files are local by default; any publication is an explicit user decision.
+[`effective-html/`](../../skills/effective-html/README.md) is a README-only external skill stub, not a local implementation. Its pinned Pi git package at `d95debbaef15af1d201fc6c10c77cf92b524a0d6` provides `html`, `design-artifact`, `html-wireframe`, `html-prototype`, `html-plan`, and `html-diagram`. Generated files are local by default; any publication is an explicit user decision.
 
 ### Archive
 
@@ -74,9 +76,9 @@ The four integration directories are documentation-only:
 
 - **Catalogue, not package:** the README says not to install the repository as one package, documents per-resource copying, and distinguishes external stubs from local implementations (`README.md`, introduction and setup sections).
 - **Three local extension implementations:** their entry points are `extensions/ask-user-question.ts`, `extensions/custom-header.ts`, and `extensions/prompt-snippets/index.ts`. The four other extension directories contain README pointers only.
-- **Four local skills plus one external skill stub:** only `analyze-sessions`, `pdf-reader`, `web-debug`, and `youtube-transcript` contain `SKILL.md`; `effective-html` is documentation only.
+- **Five local skills plus one external skill stub:** `analyze-sessions`, `pdf-reader`, `software-factory`, `web-debug`, and `youtube-transcript` contain `SKILL.md`; `effective-html` is documentation only.
 - **No active local shell guard or browser wrapper:** the former `extensions/bash-guard/` and `extensions/browser/` directories were removed rather than deprecated. Historical plans may name them only as dated provenance; they are not current setup guidance.
-- **Per-module setup:** no active local extension has a package manifest. Requirements such as `agent-browser` for `web-debug`, PyMuPDF for `pdf-reader`, and `yt-dlp` for `youtube-transcript` are listed in `README.md` and component documents. External-stub implementations remain upstream-owned.
+- **Per-module setup:** no active local extension has a package manifest. Requirements such as `agent-browser` for `web-debug`, PyMuPDF for `pdf-reader`, and `yt-dlp` for `youtube-transcript` are listed in `README.md` and component documents. `software-factory` consists only of its `SKILL.md` and adds no setup step. External-stub implementations remain upstream-owned.
 - **Legacy imports currently rely on an explicit 0.84.4 compatibility layer:** `ask-user-question.ts` and `custom-header.ts` import `@mariozechner/pi-coding-agent` and/or `@mariozechner/pi-tui`; `prompt-snippets/index.ts` uses `@earendil-works/*`. Pi 0.84.4's installed loader still maps those legacy specifiers to current bundled modules, but the old imports are outside the documented package interface and have no forward-compatibility guarantee. No extension-load success is claimed because that smoke test was not run.
 - **No repository-level validation harness:** the tracked tree contains no test suite, continuous-integration configuration, root package manifest, or lockfile.
 
