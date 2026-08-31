@@ -1,9 +1,9 @@
 # System Map: `pi-config` coarse overview
 
 **Question:** How does this repository extend Pi, and what are its main boundaries and operating assumptions?
-**Boundary:** The active `extensions/` and `skills/` trees, their setup dependencies, the external-extension stubs, and the `deprecated/` archive. Linked external repositories are not analyzed beyond the `pi-web-access` metadata and documentation needed to verify its reference stub.
+**Boundary:** The active `extensions/` and `skills/` trees, their setup dependencies, the external-extension stubs, and the `deprecated/` archive. Linked external repositories are not analyzed beyond the metadata and documentation needed to verify the `pi-web-access` stub and the published `pi-observational-memory` 3.0.4 package used by its stub.
 **Horizon:** Selecting and running pieces of this snapshot with a current Pi installation.
-**Evidence basis:** Static inspection of the current repository snapshot; `pi-web-access` repository metadata, README, package/Pi manifest, and license on its `main` branch; and a local-only exercise of the `web-debug` command workflow with installed `agent-browser` 0.18.0. Runtime compatibility of the other components was not tested.
+**Evidence basis:** Static inspection of the current repository snapshot; `pi-web-access` repository metadata, README, package/Pi manifest, and license on its `main` branch; published `pi-observational-memory` 3.0.4 metadata and source plus a local-only Pi/llama.cpp runtime and worker smoke test; and a local-only exercise of the `web-debug` command workflow with installed `agent-browser` 0.18.0. Runtime compatibility of the remaining components was not tested.
 
 ## At a glance
 
@@ -22,7 +22,7 @@ A user selects one catalogue entry
   → the selected implementation contributes tools/events/UI or a skill playbook
 ```
 
-The path is conditional: the local browser extension also needs Chromium, `web-debug` needs an external `agent-browser` executable, PDF reading needs a PyMuPDF virtual environment, and YouTube transcripts need `yt-dlp`. The `web-access/` stub has no runtime surface or local setup; installation, provider configuration, credentials, and compatibility are owned by `pi-web-access` upstream. This repository deliberately supplies no root package manifest or one-command installer.
+The path is conditional: the local browser extension also needs Chromium, `web-debug` needs an external `agent-browser` executable, PDF reading needs a PyMuPDF virtual environment, and YouTube transcripts need `yt-dlp`. The `web-access/` stub has no runtime surface or local setup; installation, provider configuration, credentials, and compatibility are owned by `pi-web-access` upstream. The `observational-memory/` stub likewise registers nothing locally, but documents its reviewed npm pin and an explicitly manual, loopback-only Qwen/llama.cpp worker setup. This repository deliberately supplies no root package manifest or one-command installer.
 
 ## Parts
 
@@ -36,7 +36,7 @@ The path is conditional: the local browser extension also needs Chromium, `web-d
 | `custom-header.ts` | startup event, `/builtin-header` | Replaces the TUI header with a custom Pi logo. |
 | `prompt-snippets/` | input transform, `/snippets`, `Alt+S` | Applies selected one-shot Markdown instructions before or after the next user message. |
 
-`interactive-subagents/`, `observational-memory/`, and `web-access/` are README-only stubs pointing to separate repositories, not local implementations. `web-access/` replaces the former local `web-fetch/` and `web-search/` catalogue entries with a reference to external `pi-web-access`, which provides web search and content retrieval at a high level.
+`interactive-subagents/`, `observational-memory/`, and `web-access/` are README-only stubs pointing to separate repositories, not local implementations. `observational-memory/` points specifically to `elpapi42/pi-observational-memory` and documents the pinned V3 npm package, its branch-local session ledger, and the verified manual local-model command; it is not the different parallel-observer implementation. `web-access/` replaces the former local `web-fetch/` and `web-search/` catalogue entries with a reference to external `pi-web-access`, which provides web search and content retrieval at a high level.
 
 ### Skills
 
@@ -66,7 +66,7 @@ The path is conditional: the local browser extension also needs Chromium, `web-d
 - **Catalogue, not package:** the README says not to install the repository as one package, documents per-resource copying, and distinguishes external stubs from local implementations (`README.md`, introduction and setup sections).
 - **Five local extension implementations:** their entry points and registrations are under `extensions/`; the other three extension directories contain only README pointers to external repositories.
 - **Selective safety and context controls:** `extensions/bash-guard/index.ts` documents its mode-specific gate; `extensions/browser/index.ts` removes all eight tools from the active set by default; `extensions/prompt-snippets/index.ts` clears enabled snippets after input.
-- **Per-module setup:** npm manifests exist only beside `bash-guard` and `browser`; external requirements, including `agent-browser` for `web-debug`, are listed in `README.md` and the relevant skill documents. External-stub package setup remains upstream-owned.
+- **Per-module setup:** npm manifests exist only beside `bash-guard` and `browser`; external requirements, including `agent-browser` for `web-debug`, are listed in `README.md` and the relevant skill documents. External-stub implementations remain upstream-owned; the observational-memory stub records the reviewed npm 3.0.4 pin and machine-specific local runtime integration without vendoring it.
 - **Mixed Pi API namespaces:** three active extension entry points import the older `@mariozechner/*` packages, while `browser` and `prompt-snippets` import `@earendil-works/*` (`extensions/**/*.ts`, import declarations).
 - **No repository-level validation harness:** the tracked tree contains no test suite, continuous-integration configuration, root package manifest, or lockfile.
 
@@ -78,9 +78,9 @@ The path is conditional: the local browser extension also needs Chromium, `web-d
 
 ## Fog
 
-- **Current runtime compatibility:** **Needed:** isolated load and smoke-test results for all five local functional extensions against the user's installed Pi version.
-- **Actual adopted subset:** **Needed:** compare this catalogue with the user's `~/.pi/agent/extensions` and `skills` directories plus Pi's installed external packages; repository contents alone do not show what is in use.
-- **External package drift and security:** `web-access/` intentionally does not pin or vendor `pi-web-access`; its provider, credential, storage, and network behavior can change independently. **Needed:** review the installed upstream version and its current documentation before adoption.
+- **Current runtime compatibility:** Published `pi-observational-memory` 3.0.4 was loaded and exercised in isolation against Pi 0.84.4 with local llama.cpp 9430; compatibility of the five local functional extensions and the other external stubs still needs isolated smoke tests.
+- **Actual adopted subset:** The observational-memory npm package is confirmed globally adopted for the documented machine; a complete comparison with the user's global extension and skill directories is still needed because repository contents alone do not show the full active set.
+- **External package drift and security:** `web-access/` intentionally does not pin or vendor `pi-web-access`; its provider, credential, storage, and network behavior can change independently. Observational memory is pinned to npm 3.0.4, but its model-generated records, session/clipboard storage, session-model fallback, and accepted lifecycle/empty-compaction behavior still form a trust boundary. **Needed:** review each installed upstream version and its current documentation before changing a pin.
 
 ## Frontier
 

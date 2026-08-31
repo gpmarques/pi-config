@@ -11,7 +11,7 @@ This is **not** meant to be installed as one big package. Browse the repo and co
 Some extensions are big enough to live in their own repositories:
 
 - **[pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)** — async subagents on tmux or Herdr terminal surfaces, maintained in a separate fork
-- **[pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)** — tiered session memory with deterministic compaction
+- **[pi-observational-memory](https://github.com/elpapi42/pi-observational-memory)** — V3 branch-local observations/reflections with deterministic compaction
 - **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
 - **[pi-dictate](https://github.com/amosblomqvist/pi-dictate)** — real-time voice dictation inside pi
 - **[learn](https://github.com/amosblomqvist/learn)** — my AI learning system, built on top of this config
@@ -74,7 +74,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `browser/` — Playwright-driven headless Chromium the agent can drive (navigate, eval JS, inspect network/console, click, screenshot); off by default, enable with `/browser on`
 - `custom-header.ts` — the big capital Π header
 - `interactive-subagents/` — stub, see [gpmarques/pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)
-- `observational-memory/` — stub, see [pi-observational-memory](https://github.com/amosblomqvist/pi-observational-memory)
+- `observational-memory/` — stub, see [elpapi42/pi-observational-memory](https://github.com/elpapi42/pi-observational-memory); documents the pinned npm 3.0.4 local-Qwen setup
 - `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send
 - `web-access/` — stub, see [pi-web-access](https://github.com/nicobailon/pi-web-access)
 
