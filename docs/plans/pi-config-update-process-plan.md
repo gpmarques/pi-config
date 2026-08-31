@@ -6,12 +6,14 @@
 
 **Validated Pi version:** 0.84.4
 
+> **Historical proposal and machine snapshot:** This plan was never implemented and is retained as dated design provenance. Package counts, catalogue inventories, named paths (including the former `extensions/bash-guard/` and `extensions/browser/`), hashes, absolute paths, installed-tool observations, and other effective-machine claims below were measured on 2026-08-30. The current catalogue has since removed those two extension directories and added documentation-only external stubs. Nothing below is an assertion about the current tree or machine, and this proposal must not be implemented unchanged. Re-inventory the target tree, `PI_CODING_AGENT_DIR`, and Pi version before reconsidering any stage.
+
 ## Executive decision
 
 Adopt a **hybrid, package-first design**:
 
 1. Make this repository an explicit Pi package and register it as a **filtered local-path package** on the workstation where the repository is edited. Pi then loads selected resources directly from this checkout; a source edit, rename, or removal becomes effective after `/reload`, without copying or mirror deletion.
-2. Support an **unpinned git package** for other machines. `pi update --extension <source>` can advance its checkout and reinstall root npm dependencies, but it is not the primary local-development update path.
+2. Support an **unpinned git package** for other machines. `pi update <configured-source>` can advance its checkout and reinstall root npm dependencies, but it is not the primary local-development update path. Pi 0.84.4 also accepts `pi update --extension <source>` as an alias.
 3. Add a small repository-owned lifecycle CLI for read-only status/doctor checks, opt-in non-npm dependency setup, one-time migration of existing copies, backups, and rollback. It must **not** maintain a second steady-state copy of tracked resources.
 4. Store repository-owned generated state outside package source trees, rooted at `PI_CODING_AGENT_DIR`: browser profiles, Python environments, setup stamps, and backups must survive package checkout replacement and must never enter the repository.
 
@@ -94,9 +96,9 @@ After adopting the current installed subset:
 - Browser state currently defaults to a literal `~/.pi/agent/extensions/browser/.profile`, bypassing `PI_CODING_AGENT_DIR` (`extensions/browser/index.ts:30,135`). PDF commands expect `SKILL_DIR/.venv` (`skills/pdf-reader/SKILL.md:12-21`).
 - The repository ignores `node_modules`, `.venv`, Python caches, and runtime data, so an installed copy can contain untracked state not represented by the catalogue (`.gitignore:1-31`).
 
-### Effective global Pi configuration
+### Effective global Pi configuration (2026-08-30 historical snapshot)
 
-Read-only inspection of the effective root from `PI_CODING_AGENT_DIR=/Users/guilhermemarques/.pi/agent` established:
+The following read-only inspection was measured on 2026-08-30 and requires remeasurement before implementation. At that time, the effective root was `PI_CODING_AGENT_DIR=/Users/guilhermemarques/.pi/agent`:
 
 - Global settings currently configure four unrelated packages: `pi-mcp-adapter`, `pi-autoresearch`, `pi-transcribe`, and local `pi-interactive-subagents` (`/Users/guilhermemarques/.pi/agent/settings.json:7-12`). They must remain byte-for-byte equivalent except for appending/replacing the one `pi-config` package entry.
 - Manually copied catalogue resources are:
@@ -119,7 +121,7 @@ Do not encode the absolute username-specific path in implementation. All tooling
 - Verified CLI help for 0.84.4 says:
   - `pi update` defaults to self-update;
   - `pi update --extensions` updates packages;
-  - `pi update --extension <source>` updates one package;
+  - `pi update <source>` updates one package; `pi update --extension <source>` is a supported alias;
   - `pi config` is the resource-enable/disable TUI;
   - `pi install/remove` use global settings unless `-l` is passed.
 - Embedded 0.84.4 package-manager source confirms:
@@ -162,7 +164,7 @@ Add a root `package.json` with explicit `pi.extensions` and `pi.skills`; registe
 
 #### Git source
 
-- **Strength:** unpinned git sources can advance through `pi update --extension <source>` or `pi update --extensions`; root npm dependencies reinstall.
+- **Strength:** unpinned git sources can advance through `pi update <configured-source>` or `pi update --extensions`; root npm dependencies reinstall.
 - **Strength:** portable to a second machine without a pre-existing checkout.
 - **Limitation:** checkout changes use destructive reset and `git clean -fdx`; all ignored in-checkout generated state is disposable.
 - **Limitation:** pinned refs do not advance. A new pinned ref must be installed explicitly.
@@ -389,7 +391,7 @@ For a local source, normalize the settings path relative to `settings.json` as P
 #### `update`
 
 - **Local source:** do not call `pi update`; explain that tracked code is already live. Reconcile dependency input changes, run doctor, and print `/reload`.
-- **Unpinned git source:** with `--apply`, invoke the exact verified `pi update --extension <configured-source>`, then reconcile non-npm setup, run doctor, and print `/reload`.
+- **Unpinned git source:** with `--apply`, invoke the canonical verified `pi update <configured-source>`, then reconcile non-npm setup, run doctor, and print `/reload`. The 0.84.4 `--extension` form is an accepted alias, but the proposed wrapper should emit the positional interface.
 - **Pinned git source:** do not imply advancement; report the pin and require an explicit new ref through adoption/install workflow.
 - **npm source:** support only if publishing is later approved; exact versions remain pinned.
 - Refuse ambiguous duplicate `pi-config` package identities.
@@ -527,7 +529,7 @@ Define `npm test` as Node's built-in test runner over `tests/**/*.test.mjs`. Def
 1. Exact manifest discovery includes only the 9 local active resources: 5 extensions and 4 skills; all 3 external stubs and every deprecated resource are excluded.
 2. Package filters enable only exact selected paths; empty prompt/theme arrays enable none.
 3. Local registration resolves relative to the global settings directory and local update planning never calls `pi update`.
-4. Unpinned git update constructs `pi update --extension <exact configured source>`; pinned refs report no advancement.
+4. Unpinned git update constructs `pi update <exact configured source>`; pinned refs report no advancement.
 5. Bare `pi update` is never emitted by lifecycle tooling.
 6. Duplicate top-level copies are detected even though their canonical paths differ.
 7. Identical copies, modified tracked files, known generated state, unknown extras, broken symlinks, and symlink escapes are classified correctly.

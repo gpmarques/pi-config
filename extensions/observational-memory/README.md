@@ -50,15 +50,17 @@ The global namespace used on this machine is:
 
 `llama-local/qwen3.8-27b-q4km-om` is a text-only OpenAI Chat Completions model with a 32,768-token context window, 4,096 maximum output tokens, zero local costs, and Qwen chat-template thinking controls. The explicit model block prevents normal operation from depending on the active session model. A 6,000-token observer chunk cap is conservative for the 32K context because it leaves room for the worker system prompt, existing memory, tool schema, and response.
 
-### Exact command verified on this machine
+### Machine-specific reproducibility record (not portable instructions)
 
-The model is the official [`ggml-org/Qwen3.8-27B-GGUF`](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF) Q4_K_M file. Its verified SHA-256 is:
+> Recorded on 2026-08-30 for this machine's Apple Metal setup and llama.cpp build 9430. The absolute model path, hardware flags, and server options below preserve the reviewed run; they are not general setup instructions. Revalidate them against the target machine and current llama.cpp help before adapting this record.
+
+The model used for this record is the official [`ggml-org/Qwen3.8-27B-GGUF`](https://huggingface.co/ggml-org/Qwen3.8-27B-GGUF) Q4_K_M file. Its verified SHA-256 is:
 
 ```text
 31629f53165ab6a7dad8c9847dcfd1fdf55829dac1e6e748f4a68581b0033d34
 ```
 
-Start the server manually in its own terminal:
+The recorded foreground launch command was:
 
 ```bash
 MODEL="$HOME/Models/hf-hub/models--ggml-org--Qwen3.8-27B-GGUF/snapshots/0669b98607d47046c7c2b3f801011d54a08cfccf/Qwen3.8-27B-Q4_K_M.gguf"
@@ -83,7 +85,7 @@ This uses Metal offload, disables vision-projector discovery, prevents remote mo
 
 There is deliberately no LaunchAgent, daemon, login item, shell-profile hook, or auto-start. Stop the foreground server with `Ctrl+C`; verify release with `lsof -nP -iTCP:8080 -sTCP:LISTEN`.
 
-Basic local checks after startup:
+The local checks used for this record were:
 
 ```bash
 curl -fsS http://127.0.0.1:8080/v1/models

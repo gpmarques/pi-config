@@ -35,4 +35,5 @@ Progress/info logs go to stderr. On failure (no English captions, network error,
 
 - Only English captions are attempted (`en`, `en-US`, `en-GB`, then any `en*`). Manual captions are preferred over auto-generated.
 - Transcript is plain text with timing/formatting stripped — not timestamped.
-- For non-English videos or videos with captions disabled, the script will fail; consider `video_extract` with a Gemini prompt as a fallback.
+- Captionless videos and videos with only non-English caption tracks fail. The script does not transcribe speech or attempt non-English captions; a video in any spoken language works only when a usable English caption track exists.
+- There is no built-in media-transcription fallback. A separately installed tool such as `pi-transcribe` can transcribe a downloaded local audio or video file through its `transcribe_file` tool, but that package is not bundled with or installed by this skill.

@@ -1,5 +1,7 @@
 # Plan: migrate `web-debug` from pi browser tools to `agent-browser`
 
+> **Implemented historical plan:** Commit [`ca15706ab524a760cbbea8979b7ecd909e278807`](https://github.com/gpmarques/pi-config/commit/ca15706ab524a760cbbea8979b7ecd909e278807) implemented this migration on 2026-08-30. This file is retained as design provenance, not as current setup guidance. In particular, its “Confirmed current facts” section records the pre-migration state. The separate `extensions/browser/` implementation that this plan said to retain was removed from the active catalogue on 2026-08-31, so all claims below that it remains present are historical. Consult the current skill, reference, README, and system map for present behavior.
+
 ## Proposal
 
 Rewrite `pi-config/skills/web-debug` around the installed `agent-browser` 0.18.0 CLI while preserving its runtime-first **reproduce → observe → hypothesize → verify** discipline. Keep `SKILL.md` focused on triggering, safety, the core loop, and common playbooks; move version-sensitive command details and limitations into one bundled reference. Update catalogue documentation that still says the skill depends on the pi browser extension.
@@ -34,7 +36,7 @@ No material user preference blocks implementation. Runtime choices that still re
 - General-purpose browser automation, scraping, or visual QA guidance beyond debugging a reported frontend behavior.
 - Claiming response-header/status parity with the old browser extension.
 
-## Confirmed current facts
+## Confirmed current facts at planning time (pre-migration)
 
 ### Repository
 

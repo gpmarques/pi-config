@@ -121,7 +121,7 @@ Available on **all four scripts**:
 | `--since WHEN` / `--until WHEN` | `YYYY-MM-DD`, ISO datetime, or relative: `7d`, `2w`, `3h`, `30m` |
 | `--cwd SUBSTR` | Substring match on the session's real `cwd`. Repeatable. |
 | `--model SUBSTR` | Substring match on model id. Repeatable. |
-| `--provider {anthropic,openai,google}` | |
+| `--provider {anthropic,openai,google}` | Exact provider filter; other provider names are rejected by argument parsing. |
 | `--session ID` | Session id or prefix (8 chars usually unique) |
 | `--include-subagents` / `--no-subagents` | Override the script default |
 | `--limit N` | Cap items returned (caps groups, not sessions, for `cost.py` group views) |
@@ -129,6 +129,8 @@ Available on **all four scripts**:
 | `--min-messages N` | Drop short sessions |
 | `--errors-only` | Only sessions with at least one `toolResult.isError` |
 | `--grep SUBSTR` | Case-insensitive substring on the session's concatenated user prompts |
+
+`--provider` currently accepts only the three choices shown above. To filter sessions from another provider, use one or more repeatable `--model SUBSTR` filters matching that provider's model IDs; a provider name works there only if it is part of the recorded model ID.
 
 ### Subagent defaults
 - `cost.py`: **included** (totals = real spend)

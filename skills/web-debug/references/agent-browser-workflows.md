@@ -303,8 +303,7 @@ agent-browser --version
 ```
 
 If either fails, report the blocked prerequisite. Do not install anything and do
-not fall back to the pi browser extension, `browser-use`, Playwright, or another
-provider.
+not fall back to `browser-use`, Playwright, or another browser provider.
 
 Before starting, list only ambient setting names and config-file presence:
 
