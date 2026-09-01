@@ -64,7 +64,7 @@ Create `00-status.md` first, before Gate 1. Update it at every gate approval and
 5. On approval, mark the gate APPROVED in `00-status.md` and move on.
 6. **Backtracking:** if work at a later gate reveals an earlier approved decision is wrong, stop, update the earlier doc, set that gate back to "in progress" in `00-status.md`, and get re-approval before continuing.
 
-**Optional gate explainer:** when the user asks to see or visualize a gate before approval, delegate one simple self-contained HTML explainer using the existing `show-me` and `effective-html` skills, run bounded visual smoke QA with the existing `visual-tester`, and open it locally. The Markdown gate doc remains the source of truth; the explainer is derived and must be removed after approval unless the user asks to retain it. Then ask exactly: **"Approve Gate N, or what should change?"**
+**Optional gate explainer:** only when the user asks to see or visualize a gate before approval, delegate the Markdown gate doc and the exact approval question to `simple-visual-presenter`. Follow that skill's bounded visual QA and local-open workflow. The Markdown gate doc remains the source of truth; remove the derived HTML after approval unless the user asks to retain it.
 
 ## Gate 1 — Product (no tech talk)
 

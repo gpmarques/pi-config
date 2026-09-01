@@ -14,7 +14,7 @@ Some extensions are big enough to live in their own repositories:
 - **[pi-observational-memory](https://github.com/elpapi42/pi-observational-memory)** — V3 branch-local observations/reflections with deterministic compaction
 - **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
 
-The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **six local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
+The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **seven local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
 For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
 
@@ -76,6 +76,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `effective-html/` — README-only external stub for a pinned Pi package providing six standalone HTML artifact skills
 - `pdf-reader/` — read PDFs (lecture notes, papers) into the context
 - [`session-retrospective/`](skills/session-retrospective/SKILL.md) — a bounded, evidence-based closure routine that carries approved general lessons through implementation and verification
+- [`simple-visual-presenter/`](skills/simple-visual-presenter/SKILL.md) — a simple visual-presentation workflow that composes `show-me`, Effective HTML, and bounded visual QA while keeping the source authoritative
 - `software-factory/` — a four-gate feature workflow—Product, Architecture, Program Design, then Vertical Slices—with explicit approval before implementation
 - `web-debug/` — a runtime-first frontend debugging playbook driven through the installed `agent-browser` CLI
 - `youtube-transcript/` — fetch a YouTube video's title and transcript as JSON
