@@ -14,7 +14,7 @@ Some extensions are big enough to live in their own repositories:
 - **[pi-observational-memory](https://github.com/elpapi42/pi-observational-memory)** — V3 branch-local observations/reflections with deterministic compaction
 - **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
 
-The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **five local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
+The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **six local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
 For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
 
@@ -67,7 +67,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `herdr-annotate/` — README-only external stub for pinned Herdr Annotate Lite; it is a Herdr plugin, not a Pi extension
 - `interactive-subagents/` — README-only external stub, see [gpmarques/pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)
 - `observational-memory/` — README-only external stub, see [elpapi42/pi-observational-memory](https://github.com/elpapi42/pi-observational-memory); documents the pinned npm 3.0.4 local-Qwen setup
-- `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send
+- `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send; includes [`close-retrospective.md`](extensions/prompt-snippets/snippets/close-retrospective.md) for invoking the bounded closure routine
 - `web-access/` — README-only external stub, see [pi-web-access](https://github.com/nicobailon/pi-web-access)
 
 ### Skills
@@ -75,6 +75,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `analyze-sessions/` — Python scripts to query past pi sessions: cost rollups, prompt-pattern mining, session rendering
 - `effective-html/` — README-only external stub for a pinned Pi package providing six standalone HTML artifact skills
 - `pdf-reader/` — read PDFs (lecture notes, papers) into the context
+- [`session-retrospective/`](skills/session-retrospective/SKILL.md) — a bounded, evidence-based closure routine that carries approved general lessons through implementation and verification
 - `software-factory/` — a four-gate feature workflow—Product, Architecture, Program Design, then Vertical Slices—with explicit approval before implementation
 - `web-debug/` — a runtime-first frontend debugging playbook driven through the installed `agent-browser` CLI
 - `youtube-transcript/` — fetch a YouTube video's title and transcript as JSON

@@ -53,6 +53,8 @@ Create `00-status.md` first, before Gate 1. Update it at every gate approval and
 
 **Resume rule:** at the start of any session, if `docs/plans/<feature-slug>/00-status.md` exists for the feature being discussed, read every doc in that folder first, then continue from the first unapproved gate or first unchecked slice. Never redo an approved gate unless the user asks for it or a later gate invalidated it.
 
+**Reuse rule:** before retrying or replacing apparently unfinished work, inspect durable status, relevant artifacts and worktrees, and current run/subagent state. Reuse valid work and resume from its last verified boundary instead of duplicating it from chat assumptions.
+
 ## The approval protocol (run at every gate)
 
 1. Write the gate doc to disk.
@@ -61,6 +63,8 @@ Create `00-status.md` first, before Gate 1. Update it at every gate approval and
 4. Approval means the user clearly says yes / approve / continue. Anything else means: revise the doc to address their answer, then re-ask.
 5. On approval, mark the gate APPROVED in `00-status.md` and move on.
 6. **Backtracking:** if work at a later gate reveals an earlier approved decision is wrong, stop, update the earlier doc, set that gate back to "in progress" in `00-status.md`, and get re-approval before continuing.
+
+**Optional gate explainer:** when the user asks to see or visualize a gate before approval, delegate one simple self-contained HTML explainer using the existing `show-me` and `effective-html` skills, run bounded visual smoke QA with the existing `visual-tester`, and open it locally. The Markdown gate doc remains the source of truth; the explainer is derived and must be removed after approval unless the user asks to retain it. Then ask exactly: **"Approve Gate N, or what should change?"**
 
 ## Gate 1 — Product (no tech talk)
 
@@ -85,6 +89,7 @@ Work with the user to fill this template, saved as `01-product.md`:
 Rules for this gate:
 
 - **Banned in this stage:** databases, schemas, endpoints, architecture, file names. If tech appears, move it to Gate 2.
+- **Material ambiguity stop:** if an unresolved product choice would change observable behavior, stop and ask one behavior question. Do not choose silently or advance until it is answered.
 - For anything with a UI: produce one plain HTML file per screen in `mockups/` — no framework, no build step, throwaway by design. Iterate on the mockups with the user until they say "yes, that."
 
 Run the approval protocol.
@@ -162,6 +167,7 @@ After **every** slice:
 - **Compact at every boundary.** At the end of every gate and every slice, make sure the docs contain everything decided — nothing important may exist only in chat. Tell the user this is a safe point to start a fresh session; a new session must be able to continue from the docs alone (see the resume rule). If the harness warns that context is running low, compact immediately, wherever you are.
 - **Keep diffs reviewable.** Small slices. If the user hasn't looked at code in a long stretch, nudge them at a slice boundary — losing touch with the codebase costs weeks, exactly when the agent hits a bug it can't solve.
 - **Real tests only.** Never write a test that passes against the pre-change code — a test that can't fail tests nothing. Never comment out, skip, or weaken a test to get to green.
+- **Retrospective lessons become systemic fixes.** Prefer invariants, automation, or reusable guidance over permanent prohibitions. Keep speculative hardening out of the current feature scope; propose it separately.
 
 ## Optional: durable context in the codebase
 
