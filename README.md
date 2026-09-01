@@ -13,8 +13,6 @@ Some extensions are big enough to live in their own repositories:
 - **[pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)** — async subagents on tmux or Herdr terminal surfaces, maintained in a separate fork
 - **[pi-observational-memory](https://github.com/elpapi42/pi-observational-memory)** — V3 branch-local observations/reflections with deterministic compaction
 - **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
-- **[pi-dictate](https://github.com/amosblomqvist/pi-dictate)** — real-time voice dictation inside pi
-- **[learn](https://github.com/amosblomqvist/learn)** — my AI learning system, built on top of this config
 
 The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **five local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
