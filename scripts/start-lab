@@ -1,0 +1,347 @@
+#!/bin/sh
+set -eu
+
+resolve_script() {
+    path=$1
+    case $path in
+        /*) ;;
+        *) path=$PWD/$path ;;
+    esac
+
+    while [ -L "$path" ]; do
+        directory=$(CDPATH= cd -P "$(dirname "$path")" && pwd)
+        link=$(readlink "$path")
+        case $link in
+            /*) path=$link ;;
+            *) path=$directory/$link ;;
+        esac
+    done
+
+    directory=$(CDPATH= cd -P "$(dirname "$path")" && pwd)
+    printf '%s/%s\n' "$directory" "$(basename "$path")"
+}
+
+search_repositories() {
+    runtime=$1
+    query=$2
+    if [ -z "$query" ]; then
+        printf 'Type to search GitHub\t\tTry a repository name or owner:YOUR-ORG\n'
+        return 0
+    fi
+
+    error_file=$runtime/search-error.$$
+    if results=$(gh search repos \
+        --limit 100 \
+        --json fullName,visibility,description \
+        --jq '.[] | [.fullName, (.visibility // "UNKNOWN"), ((.description // "") | gsub("[[:cntrl:]]"; " "))] | @tsv' \
+        -- "$query" 2>"$error_file"); then
+        if [ -n "$results" ]; then
+            printf '%s\n' "$results"
+        else
+            printf 'No repositories found\t\tTry another query; your selection is kept.\n'
+        fi
+        return 0
+    fi
+
+    error=$(tr '\t\r\n' '   ' < "$error_file" | cut -c 1-500)
+    [ -n "$error" ] || error='GitHub repository search failed'
+    printf '! SEARCH FAILED\tERROR\t%s\n' "$error"
+}
+
+valid_repository() (
+    repository=$1
+    owner=${repository%%/*}
+    basename=${repository#*/}
+    case $repository in
+        */*/*|/*|*/|''|*[!A-Za-z0-9._/-]*) exit 1 ;;
+        */*) ;;
+        *) exit 1 ;;
+    esac
+    case $owner in
+        ''|.|..|*[!A-Za-z0-9.-]*|-*) exit 1 ;;
+    esac
+    case $basename in
+        ''|.|..|-*) exit 1 ;;
+    esac
+)
+
+toggle_repository() {
+    selection_file=$1
+    repository=$2
+    if ! valid_repository "$repository"; then
+        printf 'change-list-label( Choose a repository result first )\n'
+        return 0
+    fi
+
+    # Only explicit toggles modify the basket. Search reloads never overwrite it.
+    action=select
+    if grep -Fqix -e "$repository" "$selection_file"; then
+        action=deselect
+    fi
+    awk -v repo="$repository" '
+        tolower($0) == tolower(repo) { found = 1; next }
+        { print }
+        END { if (!found) print repo }
+    ' "$selection_file" > "$selection_file.next"
+    mv "$selection_file.next" "$selection_file"
+    count=$(wc -l < "$selection_file" | tr -d ' ')
+    printf '%s+down+change-preview-label( Details / %s selected )+refresh-preview\n' "$action" "$count"
+}
+
+restore_marks() {
+    # fzf supplies a file containing the displayed repository IDs, in row order.
+    # Repaint checkmarks from the persistent basket, including after empty/error results.
+    awk '
+        BEGIN { printf "clear-multi" }
+        FILENAME == ARGV[1] { selected[tolower($0)] = 1; next }
+        tolower($0) in selected { printf "+pos(%d)+select", FNR }
+        END { print "+first+change-list-label( GitHub results )+refresh-preview" }
+    ' "$1" "$2"
+}
+
+preview_repository() {
+    selection_file=$1
+    repository=$2
+    if valid_repository "$repository"; then
+        printf '\033[1m%s\033[0m\n%s\n\n%s\n\nhttps://github.com/%s\n' "$repository" "$3" "$4" "$repository"
+    else
+        printf '%s\n\n%s\n' "$repository" "$4"
+    fi
+    count=$(wc -l < "$selection_file" | tr -d ' ')
+    printf '\n\033[1mSelected (%s)\033[0m\n' "$count"
+    if [ -s "$selection_file" ]; then
+        awk '{ print "  + " $0 }' "$selection_file"
+        printf '\nSelections persist across searches.\nSearch a selected repo and Tab to remove it.\n'
+    else
+        printf 'Nothing selected yet. Use Tab to add a repository.\n'
+    fi
+}
+
+script_self=$(resolve_script "$0")
+case ${1-} in
+    __search)
+        [ "$#" -eq 3 ] || exit 2
+        search_repositories "$2" "$3" | awk -F '\t' '
+            {
+                name = length($1) > 40 ? substr($1, 1, 37) "..." : $1
+                printf "%s\t%s\t%s\t%-40s %-9s %s\n", $1, $2, $3, name, $2, $3
+            }
+        '
+        exit
+        ;;
+    __toggle)
+        [ "$#" -eq 3 ] || exit 2
+        toggle_repository "$2" "$3"
+        exit
+        ;;
+    __restore)
+        [ "$#" -eq 3 ] || exit 2
+        restore_marks "$2" "$3"
+        exit
+        ;;
+    __preview)
+        [ "$#" -eq 6 ] || exit 2
+        preview_repository "$2" "$3" "$4" "$5"
+        exit
+        ;;
+    __finish)
+        [ "$#" -eq 3 ] || exit 2
+        if [ -s "$2" ]; then
+            : > "$3"
+            printf 'abort\n'
+        else
+            printf 'change-list-label( Select at least one repository with Tab )\n'
+        fi
+        exit
+        ;;
+esac
+
+usage() {
+    echo "Usage: $0" >&2
+    exit 2
+}
+
+[ "$#" -eq 0 ] || usage
+if [ ! -t 0 ] || [ ! -t 1 ]; then
+    echo "Error: start-lab must be run from an interactive terminal." >&2
+    exit 1
+fi
+
+for dependency in gh git fzf; do
+    if ! command -v "$dependency" >/dev/null 2>&1; then
+        echo "Error: required command '$dependency' was not found in PATH. Install it, then run start-lab again." >&2
+        exit 1
+    fi
+done
+
+if ! gh auth status >/dev/null 2>&1; then
+    echo "Error: GitHub CLI is not authenticated. Run 'gh auth login', confirm any required organization/SSO access, then retry." >&2
+    exit 1
+fi
+
+caller_dir=$(pwd -P)
+printf 'Lab directory name: '
+IFS= read -r lab_name || {
+    echo >&2
+    echo "Cancelled; no lab was created." >&2
+    exit 0
+}
+
+case $lab_name in
+    ''|.|..|*[!A-Za-z0-9._-]*|-*)
+        echo "Error: use one safe directory component (letters, numbers, '.', '_', or '-'; no leading '-')." >&2
+        exit 2
+        ;;
+esac
+
+target=$caller_dir/$lab_name
+if [ -e "$target" ] || [ -L "$target" ]; then
+    echo "Error: target already exists: $target" >&2
+    exit 1
+fi
+
+umask 077
+runtime=$(mktemp -d "${TMPDIR:-/tmp}/start-lab.XXXXXX") || {
+    echo "Error: could not create private temporary storage." >&2
+    exit 1
+}
+cleanup() {
+    rm -rf -- "$runtime"
+}
+trap cleanup EXIT HUP INT TERM
+selection_file=$runtime/selections
+finish_file=$runtime/finished
+touch "$selection_file"
+
+START_LAB_SELF=$script_self
+START_LAB_RUNTIME=$runtime
+START_LAB_SELECTION=$selection_file
+START_LAB_FINISH=$finish_file
+export START_LAB_SELF START_LAB_RUNTIME START_LAB_SELECTION START_LAB_FINISH
+
+tab=$(printf '\t')
+picker_status=0
+if "$script_self" __search "$runtime" '' | FZF_DEFAULT_OPTS='' FZF_DEFAULT_OPTS_FILE='' fzf \
+    --with-shell='sh -c' \
+    --disabled \
+    --multi \
+    --no-mouse \
+    --no-sort \
+    --layout=reverse \
+    --border=rounded \
+    --border-label=" start-lab / $lab_name " \
+    --padding=1 \
+    --list-border=top \
+    --list-label=' GitHub results ' \
+    --highlight-line \
+    --no-hscroll \
+    --marker='✓' \
+    --pointer='›' \
+    --delimiter="$tab" \
+    --with-nth=4 \
+    --prompt='GitHub query> ' \
+    --ghost='name or owner:YOUR-ORG' \
+    --header-first \
+    --header='Tab: toggle  Enter: review  Esc: cancel
+Ctrl-D: review  Ctrl-U: clear query  Ctrl-/: panel' \
+    --preview='"$START_LAB_SELF" __preview "$START_LAB_SELECTION" {1} {2} {3} {q}' \
+    --preview-label=' Details / 0 selected ' \
+    --preview-window='right,42%,border-rounded,wrap,<45(up,40%,border-rounded)' \
+    --bind='change:change-list-label( Searching GitHub... )+reload-sync(sleep 0.25; "$START_LAB_SELF" __search "$START_LAB_RUNTIME" {q})' \
+    --bind='ctrl-r:change-list-label( Searching GitHub... )+reload-sync("$START_LAB_SELF" __search "$START_LAB_RUNTIME" {q})' \
+    --bind='load:transform("$START_LAB_SELF" __restore "$START_LAB_SELECTION" {*f1})' \
+    --bind='tab,btab:transform("$START_LAB_SELF" __toggle "$START_LAB_SELECTION" {1})' \
+    --bind='enter,ctrl-d:transform("$START_LAB_SELF" __finish "$START_LAB_SELECTION" "$START_LAB_FINISH")' \
+    --bind='ctrl-/:toggle-preview'; then
+    :
+else
+    picker_status=$?
+fi
+
+case $picker_status in
+    0|130) ;;
+    *)
+        echo "Error: repository picker failed (fzf exit $picker_status); no lab was created." >&2
+        exit 1
+        ;;
+esac
+
+if [ ! -f "$finish_file" ]; then
+    echo "Cancelled; no lab was created."
+    exit 0
+fi
+
+if [ ! -s "$selection_file" ]; then
+    echo "No repositories were saved; no lab was created."
+    exit 0
+fi
+
+basenames_file=$runtime/basenames
+validated_file=$runtime/validated
+: > "$basenames_file"
+: > "$validated_file"
+while IFS= read -r repository; do
+    basename=${repository#*/}
+    if ! valid_repository "$repository"; then
+        echo "Error: invalid saved repository identity: $repository" >&2
+        exit 1
+    fi
+    if grep -Fqix -e "$basename" "$basenames_file"; then
+        echo "Error: duplicate repository basename would collide in projects/: $basename" >&2
+        exit 1
+    fi
+    printf '%s\n' "$basename" >> "$basenames_file"
+    printf '%s\n' "$repository" >> "$validated_file"
+done < "$selection_file"
+
+printf '\nLab target: %s\nRepositories:\n' "$target"
+while IFS= read -r repository; do
+    printf '  - %s\n' "$repository"
+done < "$validated_file"
+printf 'Create this lab? [y/N] '
+IFS= read -r confirmation || confirmation=''
+case $confirmation in
+    y|Y) ;;
+    *)
+        echo "Cancelled; no lab was created."
+        exit 0
+        ;;
+esac
+
+script_dir=${script_self%/*}
+initializer=$script_dir/init-workspace.sh
+if [ ! -x "$initializer" ]; then
+    echo "Error: workspace initializer is missing or not executable: $initializer" >&2
+    exit 1
+fi
+"$initializer" "$target"
+
+success_file=$runtime/successes
+failure_file=$runtime/failures
+: > "$success_file"
+: > "$failure_file"
+while IFS= read -r repository; do
+    basename=${repository#*/}
+    destination=$target/projects/$basename
+    printf '\nCloning %s into %s\n' "$repository" "$destination"
+    if gh repo clone "$repository" "$destination"; then
+        printf '%s\t%s\n' "$repository" "$destination" >> "$success_file"
+    else
+        printf '%s\t%s\n' "$repository" "$destination" >> "$failure_file"
+    fi
+done < "$validated_file"
+
+printf '\nClone summary:\n'
+while IFS="$tab" read -r repository destination; do
+    [ -n "$repository" ] && printf '  OK     %s -> %s\n' "$repository" "$destination"
+done < "$success_file"
+while IFS="$tab" read -r repository destination; do
+    [ -n "$repository" ] && printf '  FAILED %s -> %s\n' "$repository" "$destination"
+done < "$failure_file"
+
+if [ -s "$failure_file" ]; then
+    echo "Lab created, but one or more repositories failed to clone." >&2
+    exit 1
+fi
+
+echo "Lab created successfully: $target"
