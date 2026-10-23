@@ -16,8 +16,6 @@ Some extensions are big enough to live in their own repositories:
 
 The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **seven local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
-For an architectural overview, see the [coarse system map](docs/system-maps/pi-config-overview.md).
-
 ## Copy an extension
 
 Single-file extension:
