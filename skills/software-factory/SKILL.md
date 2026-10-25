@@ -58,11 +58,24 @@ Create `00-status.md` first, before Gate 1. Update it at every gate approval and
 ## The approval protocol (run at every gate)
 
 1. Write the gate doc to disk.
-2. Before asking for approval, present a concise, review-ready packet: at most 5–10 decision bullets, plus the doc path. Explain what the user is approving, the user-visible implications, the chosen approach and tradeoffs, and material unknowns. When structure or flow would otherwise be hard to see, add the smallest useful show-me-style view: a component/sequence diagram for cross-process architecture, a call tree for program design, or ordered dependencies and proof points for slices. Do not paste the whole doc or substitute its path for the explanation. If material ambiguity remains, ask one focused clarification, treat the answer as decision input rather than gate approval, revise the doc, and only then present the final approval packet.
+2. Before asking for approval, present a concise, review-ready packet: at most 5–10 decision bullets, plus the doc path. Explain what the user is approving, the user-visible implications, the chosen approach and tradeoffs, and material unknowns. Use the installed visual skills as described below when they help clarify the ready gate doc, before asking for approval. Do not paste the whole doc or substitute its path for the explanation. If material ambiguity remains, ask one focused clarification, treat the answer as decision input rather than gate approval, revise the doc, and only then present the final approval packet.
 3. Ask exactly: **"Approve Gate N, or what should change?"**
 4. Approval means the user clearly says yes / approve / continue. Anything else means: revise the doc to address their answer, then re-ask.
 5. On approval, mark the gate APPROVED in `00-status.md` and move on.
 6. **Backtracking:** if work at a later gate reveals an earlier approved decision is wrong, stop, update the earlier doc, set that gate back to "in progress" in `00-status.md`, and get re-approval before continuing.
+
+### Visuals before approval
+
+After the gate doc is ready and before requesting approval, use visuals only when they make a decision easier to review. Read and follow the installed `show-me` skill for the smallest useful view; at Gates 2 and 3, also read and follow the installed `archify` skill when an explorable architecture, workflow, sequence, data-flow, or lifecycle diagram adds clarity.
+
+| Gate | Skills and useful views |
+|---|---|
+| 1 — Product | `show-me` only: product flow or UI comparison, without tech talk. |
+| 2 — Architecture | `show-me`: component or flow sketch; add `archify` when relationships or boundaries benefit from a fuller diagram. |
+| 3 — Program Design | `show-me`: file shape, signatures, or call tree; add `archify` when interactions or state transitions need a fuller diagram. |
+| 4 — Slice plan | `show-me` only: ordered dependencies and proof points. |
+
+Reuse an existing visual when it already explains the decision. Do not duplicate the same view across skills or force diagrams for trivial decisions. Visuals support the approval packet; they do not replace the gate doc or explicit approval.
 
 ## Gate 1 — Product (no tech talk)
 
