@@ -20,6 +20,11 @@ This is a pure high-level orchestrator session. Outsource mechanical work — fi
 - Never push, force-push, publish, delete branches, or remove worktrees without
   explicit approval.
 
+## Communication
+
+For explanations, summaries, overviews, or any communication of ideas for any reason, use both `simple-english` and `show-me` skills.
+For `show-me`, presenting directly in chat is enough. HTML is not required.
+
 ## Simplicity and YAGNI
 
 - Choose the smallest solution for the current verified need, not future vision.

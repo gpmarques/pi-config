@@ -14,7 +14,7 @@ Some extensions are big enough to live in their own repositories:
 - **[pi-observational-memory](https://github.com/elpapi42/pi-observational-memory)** — V3 branch-local observations/reflections with deterministic compaction
 - **[pi-web-access](https://github.com/nicobailon/pi-web-access)** — web search and content retrieval, replacing this catalogue's former local `web-search` and `web-fetch` extensions
 
-The active catalogue contains **three local extension implementations**, **four README-only external integration stubs**, **seven local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
+The active catalogue contains **three local extension implementations**, **five README-only external integration stubs**, **seven local skill implementations**, and **one README-only external skill stub**. Stub directories point to external projects rather than vendoring their code.
 
 ## Copy an extension
 
@@ -39,6 +39,7 @@ Then restart pi or run `/reload`.
 Directories described as stubs contain documentation only; do not copy them as implementations. Follow each stub's reviewed pin, requirements, state boundary, and upstream links:
 
 - [`extensions/herdr-annotate/`](extensions/herdr-annotate/README.md) — pinned Herdr Annotate Lite plugin; a Herdr integration, not a Pi extension.
+- [`extensions/herdr-nvim/`](extensions/herdr-nvim/README.md) — external Herdr TUI sidebar and Neovim annotations; reviewed Herdr plugin pin and lazy.nvim setup.
 - [`extensions/interactive-subagents/`](extensions/interactive-subagents/README.md) — maintained fork for async tmux/Herdr child agents.
 - [`extensions/observational-memory/`](extensions/observational-memory/README.md) — pinned npm V3 observational-memory package and local-model reproducibility notes.
 - [`extensions/web-access/`](extensions/web-access/README.md) — external `pi-web-access` package.
@@ -63,6 +64,7 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 - `ask-user-question.ts` — the agent asks you a question through a UI popup; popups from different extensions serialize via a shared UI lock
 - `custom-header.ts` — the big capital Π header
 - `herdr-annotate/` — README-only external stub for pinned Herdr Annotate Lite; it is a Herdr plugin, not a Pi extension
+- `herdr-nvim/` — README-only external stub for the Herdr TUI sidebar and Neovim plugin; not a Pi package
 - `interactive-subagents/` — README-only external stub, see [gpmarques/pi-interactive-subagents](https://github.com/gpmarques/pi-interactive-subagents)
 - `observational-memory/` — README-only external stub, see [elpapi42/pi-observational-memory](https://github.com/elpapi42/pi-observational-memory); documents the pinned npm 3.0.4 local-Qwen setup
 - `prompt-snippets/` — small, reusable behavior rules toggled onto a message before sending; reset after send; includes [`close-retrospective.md`](extensions/prompt-snippets/snippets/close-retrospective.md) for invoking the bounded closure routine
@@ -86,6 +88,8 @@ Avoid cloning this repo directly into `~/.pi/agent` unless it is a fresh setup. 
 ## Dependencies
 
 The three local extensions have no extension-local package manifests or nested npm setup. README-only stubs have no local runtime dependencies because their implementations and setup remain external. The Herdr Annotate Lite integration requires Herdr 0.8.0 or later and Bun; Linux clipboard support also requires `wl-clipboard`, `xclip`, or `xsel`. Effective HTML is installed as a pinned Pi package and has no runtime service or account requirement.
+
+The external [`herdr-nvim` integration](extensions/herdr-nvim/README.md) requires Herdr TUI 0.7.5 or later and Neovim 0.10 or later. It does not install either tool.
 
 `web-debug/` requires an external `agent-browser` executable; it is not an extension-local dependency. After copying the skill, check availability and version:
 
