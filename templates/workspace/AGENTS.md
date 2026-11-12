@@ -25,6 +25,9 @@ This is a pure high-level orchestrator session. Outsource mechanical work — fi
 For explanations, summaries, overviews, or any communication of ideas for any reason, use both `simple-english` and `show-me` skills.
 For `show-me`, presenting directly in chat is enough. HTML is not required.
 
+- Use a Mermaid component or sequence diagram to clarify explanations.
+  Use one-word nouns for components and participants, and one-word verbs for actions.
+
 ## Simplicity and YAGNI
 
 - Choose the smallest solution for the current verified need, not future vision.
